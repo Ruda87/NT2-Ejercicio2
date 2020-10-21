@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Ejemplo 1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+
+</head>
+
+
+<div class="container-fluid mt-3" id="app">
+    <input type="text" class="form-control" v-model="criterioDeBusqueda" @input="validarNom($event)" placeholder="Ingresar un nombre de busqueda...">
+    <br>
+    <input type="text" class="form-control" v-model="dniDeBusqueda" @input="validarDNI($event)" placeholder="Ingresar un dni de busqueda...">
+    <br>
+    <p v-if="!validoNom && !validoDNI" class="alert alert-darger">
+        Debe Ingresar por lo menos 3 caracteres de ambos datos
+    </p>
+    <p v-else-if="!validoDNI" class="alert alert-darger">
+        Debe Ingresar por lo menos 3 numeros del  DNI
+    </p>
+    <p v-else-if="!validoNom" class="alert alert-darger">
+        Debe Ingresar por lo menos 3 letras del nombre
+    </p>
+    
+    <div class="card-deck m-0">
+        <div class="row">
+            <div class="col" v-for="persona in personasFiltradas"> 
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">{{getNombreCompleto(persona)}}</h5>
+                        <p class="card-text">dni {{persona.dni}}</p>
+                        <a href="#" class="card-link">{{persona.correo}}</a>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+</div>
+
+</html>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            criterioDeBusqueda: '',
+            dniDeBusqueda: '',
+            validoNom: false,
+            validoDNI: false,
+            personas:
+                [
+                    { nombre: 'Daniel', apellido: 'Ruiz', dni: 33172787, correo: 'd.a.ruiz87@hotmail.com' },
+                    { nombre: 'Jorge', apellido: 'Diaz', dni: 33081878, correo: 'jdiaz@hotmail.com' },
+                    { nombre: 'Juan', apellido: 'Sosa', dni: 33990969, correo: 'jsosa@hotmail.com' },
+                    { nombre: 'Daniel', apellido: 'Ruiz', dni: 33819151, correo: 'dparedes@hotmail.com' },
+                    { nombre: 'Raul', apellido: 'Correa', dni: 33728242, correo: 'rcorrea@hotmail.com' },
+                    { nombre: 'Ricardo', apellido: 'Carabajal', dni: 33637333, correo: 'rcarabajal@hotmail.com' },
+                ]
+        },
+        computed: {
+            personasFiltradas() {
+                return this.personas.filter((persona) => {
+                    //let registroCompleto = `${persona.nombre}${persona.apellido}${persona.dni}${persona.correo}`
+                    let nombreCompleto = `${persona.nombre} ${persona.apellido}`
+                    let dni = `${persona.dni}`
+
+                    return nombreCompleto.toLowerCase().includes( this.criterioDeBusqueda.toLowerCase() )&& dni.toLowerCase().includes( this.dniDeBusqueda.toLowerCase() )
+                });
+                
+            }
+        },
+        methods: {
+            getNombreCompleto(persona) {
+                return `${persona.nombre} ${persona.apellido}`
+            },
+            validarNom( pNombre ){
+                let nombre = pNombre.target.value;
+                
+                this.validoNom = nombre.length > 2;
+            },
+            validarDNI( pDni ){
+                let dni = pDni.target.value;
+                
+                this.validoDNI = dni.length > 2;
+            }
+        }
+    });
+</script>
